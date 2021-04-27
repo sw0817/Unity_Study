@@ -26,3 +26,14 @@
 - 여기까지 완료하면, Unity window 창의 Tilt > Build > SDK : OVR, Tilt > Build > Platform : Android, Tilt > Build > Runtime : Mono 를 설정할 수 있게된다.
 - Tilt > Build > Do Build를 통해 apk파일을 생성할 수 있으나, 현재 2019.4 버전에서는 실패했다. 2018 버전과 2020 버전에서의 확인이 필요하다.
   - 2020 버전은 불가능, 2019 버전 성공. (2021.04.26)
+
+
+
+> Open Brush
+
+- Tilt Brush를 Oculus Quest2 에서 실행하기 위해 APK파일로 빌드하여 적용 시 사용자의 시선을 가리는 Canvas가 생성되고, 이미지가 깨지는 오류를 겪어 해결하기 위해 대안으로 사용한 Open Source 
+
+- https://github.com/icosa-gallery/open-brush 에 접속해 `Tilt brush` 의 클론 버전인 `Open brush`를 clone 했다.
+- Tilt brush와 같은 방식으로 Unity를 세팅하지만, Player Settings의 `Color Space` 를 `Gamma`로 세팅한다. (Steam VR 에서 Linear를 권장하지만, 오큘러스 퀘스트 2 용 apk파일 빌드를 위해 Gamma를 선택한다.)
+- XR Setting 의 Virtual Reality SDKs의 Oculus에서 Low Overhead Mode와 V2 Signing (Quest)를 체크한다.
+- 빌드 시 Tilt Brush APK 파일에서 발생하던 플레이어의 시야를 가리는 Canvas 오류를 해결할 수 있다.
