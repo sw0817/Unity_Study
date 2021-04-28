@@ -32,8 +32,13 @@
 > Open Brush
 
 - Tilt Brush를 Oculus Quest2 에서 실행하기 위해 APK파일로 빌드하여 적용 시 사용자의 시선을 가리는 Canvas가 생성되고, 이미지가 깨지는 오류를 겪어 해결하기 위해 대안으로 사용한 Open Source 
-
 - https://github.com/icosa-gallery/open-brush 에 접속해 `Tilt brush` 의 클론 버전인 `Open brush`를 clone 했다.
 - Tilt brush와 같은 방식으로 Unity를 세팅하지만, Player Settings의 `Color Space` 를 `Gamma`로 세팅한다. (Steam VR 에서 Linear를 권장하지만, 오큘러스 퀘스트 2 용 apk파일 빌드를 위해 Gamma를 선택한다.)
 - XR Setting 의 Virtual Reality SDKs의 Oculus에서 Low Overhead Mode와 V2 Signing (Quest)를 체크한다.
 - 빌드 시 Tilt Brush APK 파일에서 발생하던 플레이어의 시야를 가리는 Canvas 오류를 해결할 수 있다.
+- Unity는 `File` -> `Build Settings` 메뉴에서 기본 build를 할 수 있지만, `Open brush`는 독자적인 build 방식을 제공한다.
+- 상단 메뉴의 `Tilt` -> `Do Build` 기능을 사용해 build를 한다.
+- 이 경우 Open brush를 처음 clone한 상태에서 주어지는 Loading scene과 Main scene이 build 되는데, 다른 scene을 추가하거나 Loading scene과 Main scene을 제거한 상태에서 build를 해도 두 scene이 build 되는 현상이 있었다.
+- `File` -> `Build Settings` 메뉴에서 기본 build를 사용하는 경우, 원하는 scene이 build되었지만, Open brush에서 제공하는 brush가 포함된 scene에서 화면이 제대로 출력되지 않고, VR 기기를 탐색하지 못하는 error가 발생하였다.
+- `Do Build` 기능은 Open brush에서 새롭게 만든 기능이고, 상단 메뉴탭은 `Editor` 내 script에서 관리하기에 해당 경로의 script들을 분석해, `BuildTiltBrush.cs` script에서 Loading scene과 Main scene을 선택하여 build하는 코드를 찾을 수 있었다.
+- 해당 코드에 새롭게 추가한 scene을 추가해 `Do Build` 기능을 사용하는 것으로, 해당 error는 fix되었다.
