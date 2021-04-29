@@ -42,3 +42,22 @@
 - `File` -> `Build Settings` 메뉴에서 기본 build를 사용하는 경우, 원하는 scene이 build되었지만, Open brush에서 제공하는 brush가 포함된 scene에서 화면이 제대로 출력되지 않고, VR 기기를 탐색하지 못하는 error가 발생하였다.
 - `Do Build` 기능은 Open brush에서 새롭게 만든 기능이고, 상단 메뉴탭은 `Editor` 내 script에서 관리하기에 해당 경로의 script들을 분석해, `BuildTiltBrush.cs` script에서 Loading scene과 Main scene을 선택하여 build하는 코드를 찾을 수 있었다.
 - 해당 코드에 새롭게 추가한 scene을 추가해 `Do Build` 기능을 사용하는 것으로, 해당 error는 fix되었다.
+
+
+
+> Oculus Player
+
+- Oculus Integration을 Import 하여 비교적 쉽게 구현할 수 있다.
+- OVR Player를 사용한다.
+  - 이 때, 기본적으로 CharacterController와 OVRCameraRig가 생성되는데, Build 후 이동 시 카메라만 움직이고 Character는 움직이지 않는다.
+  - 이를 해결하기 위해, 최상단 오브젝트에 Character Camera Constraint 스크립트를 넣고, Camera Rig를 등록할 수 있다.
+- Tracking Space에서는 카메라로서 CenterEyeAnchor를 사용하게 되고, OVRCameraRig에서 Tracking Origin Type을 Floor Level로 설정해 눈 높이를 맞출 수 있다.
+- 사용자는 VR 환경에서 직접 회전할 수 있지만, 제자리 회전 기능 역시 필요해 구현되어있다.
+  - 회전 방식으로는 해당 버튼 클릭 시 45도 회전하는 Snap Rotation 방식과, 실제적인 회전 방식인 Enable Rotation 방식이 있다.
+  - 기본 세팅은 Snap Rotation 방식이고, 이를 수정하기 위해 OVR Player Controller 스크립트 public 변수 창의 Snap Rotation을 체크 해제 후 Enable Rotation을 체크하여 사용하면 된다.
+    - 기본 세팅에서 회전 외에 이동 방식이 전후좌우 방향으로 모두 가능하나, Enable Rotation 방식의 회전을 사용할 때 직진을 의도해도 옆으로 움직이는 불편함이 있어 스크립트 내에서 좌우 이동을 없애주고 사용하도록 했다.
+- LeftHandAnchor / LeftControllerAnchor 및 RightHandAnchor / RightControllerAnchor라는 오브젝트가 오큘러스 퀘스트의 컨트롤러 위치를 인식한다.
+  - 해당 위치에 컨트롤러 혹은 손 모양의 오브젝트를 추가할 수 있고, 손 모양이 보이게 하는 방법은 LocalAvatar와 그 아래 OVRHandPrefab을 추가하는 방법, 그리고 LeftHandAnchor, RightHandAnchor 아래에 각각 CostomHandLeft, CostomHandRight를 추가하는 방법이 있다.
+  - CostomHandLeft, CostomHandRight는 Runtime에서 Render를 해제하게 되어있어, 강제로 다시 enable 시켜줘야 렌더링이 된다.
+    - 손으로 물체를 잡기 위해서 물체에 OVR Grabbable 스크립트를 추가하고, 해당 물체를 RigidBody로 설정한다.
+    - Use Gravity와 Is Kinematic을 체크하고, 손으로 잡혀 있는 동안은 각각 false, true 값을, 놓은 뒤에는 각각 true, false/true 값을 가지게 한다.
