@@ -61,3 +61,21 @@
   - CostomHandLeft, CostomHandRight는 Runtime에서 Render를 해제하게 되어있어, 강제로 다시 enable 시켜줘야 렌더링이 된다.
     - 손으로 물체를 잡기 위해서 물체에 OVR Grabbable 스크립트를 추가하고, 해당 물체를 RigidBody로 설정한다.
     - Use Gravity와 Is Kinematic을 체크하고, 손으로 잡혀 있는 동안은 각각 false, true 값을, 놓은 뒤에는 각각 true, false/true 값을 가지게 한다.
+
+
+
+> HandMotion Trigger
+
+- `Oculus Integration`의 `Custom Hand`를 사용해 물건 집기, 던지기 외 다양한 상호작용 기능을 구현하였다.
+- Oculus Quest2의 컨트롤러의 기본 버튼(button 0 ~ 3) 을 클릭해, 손바닥 위에 메뉴가 토글되도록 구현하였다.
+- 메뉴에는 몇 가지 버튼이 나타난다.
+  - 오른쪽 컨트롤러의 중지 버튼을 누르고 있으면, 검지만 핀 상태가 되는데, 이 상태에서 버튼을 가리키면, 버튼의 설명과 함께 메뉴 위로 올라오는 인터랙션을 구현하였다.
+    - 기능을 구현하기 위해 IndexFinger로부터 발사되는 Raycast를 구현하였다. OVRInput.Get(OVRInput.Axis1D.SecondaryHandTrigger) 값을 통해 중지 버튼의 토글 상태를 확인하고, ray를 쏘아 button만이 가지고 있는 script를 발견했을 때만 유효한 함수를 부르도록 설계하였다.
+    - 버튼은 비활성화 상태, 미리보기 상태, 활성화 상태로 나뉘어, 각 단계의 값을 ray가 읽어 각각 함수를 수행하도록 하였다.
+  - 미리보기 상태의 버튼을 IndexFingerTip으로 누르면, 버튼은 활성화가 된다.
+    - IndexFingerTip과 button의 충돌 여부를 판단해야하고, 실제 컨트롤러를 잡고 있는 사용자의 손은 충돌하지 않고 지나칠 수 있기 때문에, `OnColliderEnter` 함수 대신 `OnTriggerEnter` 함수를 사용하여 통과하는 오브젝트의 충돌 시작 여부를 확인해, 버튼을 활성화하도록 하였다.
+- 인물과의 상호작용 기능을 추가하였다.
+  - 상호작용 가능한 인물을 알아보기 쉽도록, 상호작용 가능한 인물이 플레이어로부터 일정 거리 안으로 들어오면 해당 인물 머리 위로 인물의 이름이 표시되도록 하였다.
+  - 이름이 표시된 인물은 상호작용이 가능한 상태라는 의미로 `infoIsActivated` 값을 true로 반환하게되고, 이 상태에서 중지 버튼을 토글하여 ray를 쏘았을 때, focused라는 bool 값을 true로 반환하도록 설계하였다.
+  - focused가 true가 되면, 노란색 화살표가 인물 머리 위에 떠 다니게 되어 선택한 상태임을 알기 쉽도록 하였다.
+  - focused 상태에서 IndexFinger 버튼을 클릭하게 되면, 인물과 상호작용하게 된다. 
