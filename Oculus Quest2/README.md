@@ -79,3 +79,27 @@
   - 이름이 표시된 인물은 상호작용이 가능한 상태라는 의미로 `infoIsActivated` 값을 true로 반환하게되고, 이 상태에서 중지 버튼을 토글하여 ray를 쏘았을 때, focused라는 bool 값을 true로 반환하도록 설계하였다.
   - focused가 true가 되면, 노란색 화살표가 인물 머리 위에 떠 다니게 되어 선택한 상태임을 알기 쉽도록 하였다.
   - focused 상태에서 IndexFinger 버튼을 클릭하게 되면, 인물과 상호작용하게 된다. 
+
+
+
+> Walking(Running) Motion
+
+- Player가 앞, 뒤로 걷는 동안 유령처럼 미끄러지는 움직임을 실제와 같이 자연스러운 움직임으로 만들기위해 코드를 작성하였다.
+
+- Oculus Integration을 활용해 구현한 Player는, `OVRPlayerController.cs` 의 `UpdateTransform` 함수에서 현재 보고 있는 카메라의 방향과 위치를 갱신한다.
+
+- 이 갱신을 무시하고 시선의 위치를 바꿀 수 있는 Object는 `Tracking Space`이다.
+
+- OVRPlayerController.cs 스크립트 내 Oculus 컨트롤러의 움직임을 감지하는 `UpdateMovement` 함수 내 `Vector2 primaryAxis = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick)` 를 통해 왼쪽 ThumbStick(앞 뒤 움직임 컨트롤러 스틱)의 y축 움직임을 감지한다.
+  - 0~1 까지 Stick을 꺾은 정도를 입력받고, 의도된 움직임에서만 걷는 모션을 취하기 위해, Stick을 반 이상 꺾은 0.5이상의 입력값을 받는 경우에만 모션을 적용해준다.
+
+- 모션은 왼발 오른발 차례로 움직이고, 걷는 동안 머리가 위 아래로 움직인다는 가정하에 적용하였다.
+
+  - 한 발의 움직임에서 머리의 위 아래 이동 사이클이 이루어진다.
+
+  - 이 가정에 따라 걷는 모션중에 플레이어의 시선은 좌우와 상하로 동시에 흔들리며, 중앙 -> 좌측 -> 중앙까지의 좌우 흔들림 사이클 시간동안 아래 -> 위 -> 아래의 움직임 사이클이 동시에 이루어진다.
+
+- 일정 거리의 위, 아래, 좌측, 우측 움직임 이후 방향을 반대로 바꿔주도록 설정하였다.
+
+- 뒤로 걷는 중에는 앞으로 걷는 방향인 경우와 반대로 위 아래, 좌우 움직임이 발생한다.
+
